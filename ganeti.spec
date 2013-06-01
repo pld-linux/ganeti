@@ -26,13 +26,13 @@ BuildRequires:	python-pycurl
 BuildRequires:	python-pyinotify
 BuildRequires:	python-pyparsing
 BuildRequires:	python-simplejson
-%if %{with initscript}
-BuildRequires:	rpmbuild(macros) >= 1.228
-Requires(post,preun):	/sbin/chkconfig
-Requires:	rc-scripts
-%endif
+BuildRequires:	python-devel
+BuildRequires:	python-distribute
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
+Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun,postun):	systemd-units >= 38
+Requires:	rc-scripts
 Requires:	systemd-units >= 0.38
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -82,20 +82,20 @@ The tools provided are:
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{systemdtmpfilesdir}
-
-%if %{with initscript}
-install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d}
-%endif
+install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
+	$RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ganeti.conf
 
+%py_postclean
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if 0
 %pre
 %groupadd -g xxx %{name}
 %useradd -u xxx -d /var/lib/%{name} -g %{name} -c "XXX User" %{name}
@@ -105,40 +105,42 @@ if [ "$1" = "0" ]; then
 	%userremove %{name}
 	%groupremove %{name}
 fi
+%endif
 
-%if %{with initscript}
 %post
 /sbin/chkconfig --add %{name}
 %service %{name} restart
+%systemd_post %{name}.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service -q %{name} stop
 	/sbin/chkconfig --del %{name}
 fi
-%endif
-
-%if %{with systemd_service}
-%post
-%systemd_post %{name}.service
-
-%preun
 %systemd_preun %{name}.service
 
 %postun
 %systemd_reload
-%endif
 
 %files
 %defattr(644,root,root,755)
 %doc NEWS README UPGRADE
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
+%{systemdunitdir}/%{name}.service
 %{systemdtmpfilesdir}/ganeti.conf
+%if 0
+# if _sysconfdir != /etc:
+#%%dir %{_sysconfdir}
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*
+%endif
 %dir %{_libdir}/ganeti
 %{_libdir}/ganeti/check-cert-expired
 %{_libdir}/ganeti/daemon-util
 %{_libdir}/ganeti/ensure-dirs
 %{_libdir}/ganeti/import-export
 %{_libdir}/ganeti/kvm-ifup
+%dir %{_libdir}/ganeti/iallocators
 %dir %{_libdir}/ganeti/tools
 %{_libdir}/ganeti/tools/burnin
 %{_libdir}/ganeti/tools/cfgshell
@@ -212,22 +214,6 @@ fi
 %dir %{py_sitescriptdir}/ganeti/watcher
 %{py_sitescriptdir}/ganeti/watcher/*.py*
 
-%if 0
-# if _sysconfdir != /etc:
-#%%dir %{_sysconfdir}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*
-%endif
-
-# initscript and its config
-%if %{with initscript}
-%attr(754,root,root) /etc/rc.d/init.d/%{name}
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
-%endif
-
-%if %{with systemd_service}
-%{systemdunitdir}/%{name}.service
-%endif
-
 %files htools
 %defattr(644,root,root,755)
 %{_bindir}/hbal
@@ -236,7 +222,6 @@ fi
 %{_bindir}/hscan
 %{_bindir}/hspace
 %{_bindir}/htools
-%dir %{_libdir}/ganeti/iallocators
 %{_libdir}/ganeti/iallocators/hail
 %{_mandir}/man1/hail.1*
 %{_mandir}/man1/hbal.1*
