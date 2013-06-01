@@ -1,0 +1,107 @@
+--- ganeti-2.6.2/daemons/daemon-util.in~	2012-12-21 15:38:52.000000000 +0100
++++ ganeti-2.6.2/daemons/daemon-util.in	2013-06-01 19:29:38.454569439 +0200
+@@ -45,12 +45,6 @@
+   . $defaults_file
+ fi
+ 
+-# Meant to facilitate use utilities in /etc/rc.d/init.d/functions in case
+-# start-stop-daemon is not available.
+-_ignore_error() {
+-  eval "$@" || :
+-}
+-
+ _daemon_pidfile() {
+   echo "@LOCALSTATEDIR@/run/ganeti/$1.pid"
+ }
+@@ -182,17 +176,8 @@
+   fi
+ 
+   local name="$1"; shift
+-  local pidfile=$(_daemon_pidfile $name)
+-  local daemonexec=$(_daemon_executable $name)
+ 
+-  if type -p start-stop-daemon >/dev/null; then
+-    start-stop-daemon --stop --signal 0 --quiet \
+-      --pidfile $pidfile
+-  else
+-    _ignore_error status \
+-      -p $pidfile \
+-      $daemonexec
+-  fi
++  /sbin/service $name status >/dev/null 2>&1
+ }
+ 
+ # Starts a daemon
+@@ -203,12 +188,6 @@
+   fi
+ 
+   local name="$1"; shift
+-  # Convert daemon name to uppercase after removing "ganeti-" prefix
+-  local plain_name=${name#ganeti-}
+-  local ucname=$(tr a-z A-Z <<<$plain_name)
+-  local pidfile=$(_daemon_pidfile $name)
+-  local usergroup=$(_daemon_usergroup $plain_name)
+-  local daemonexec=$(_daemon_executable $name)
+ 
+   if [[ "$name" == ganeti-confd &&
+         "@CUSTOM_ENABLE_CONFD@" == False ]]; then
+@@ -216,25 +195,9 @@
+     return 1
+   fi
+ 
+-  # Read $<daemon>_ARGS and $EXTRA_<daemon>_ARGS
+-  eval local args="\"\$${ucname}_ARGS \$EXTRA_${ucname}_ARGS\""
+-
+   @PKGLIBDIR@/ensure-dirs
+ 
+-  if type -p start-stop-daemon >/dev/null; then
+-    start-stop-daemon --start --quiet --oknodo \
+-      --pidfile $pidfile \
+-      --startas $daemonexec \
+-      --chuid $usergroup \
+-      -- $args "$@"
+-  else
+-    # TODO: Find a way to start daemon with a group, until then the group must
+-    # be removed
+-    _ignore_error daemon \
+-      --pidfile $pidfile \
+-      --user ${usergroup%:*} \
+-      $daemonexec $args "$@"
+-  fi
++  /sbin/service $name start
+ }
+ 
+ # Stops a daemon
+@@ -245,14 +208,8 @@
+   fi
+ 
+   local name="$1"; shift
+-  local pidfile=$(_daemon_pidfile $name)
+ 
+-  if type -p start-stop-daemon >/dev/null; then
+-    start-stop-daemon --stop --quiet --oknodo --retry 30 \
+-      --pidfile $pidfile
+-  else
+-    _ignore_error killproc -p $pidfile $name
+-  fi
++  /sbin/service $name stop
+ }
+ 
+ # Starts a daemon if it's not yet running
+@@ -302,15 +259,9 @@
+ 
+ # Reloads the SSH keys
+ reload_ssh_keys() {
+-  @RPL_SSH_INITD_SCRIPT@ restart
++  /sbin/service sshd restart
+ }
+ 
+-# Read @SYSCONFDIR@/rc.d/init.d/functions if start-stop-daemon not available
+-if ! type -p start-stop-daemon >/dev/null && \
+-   [[ -f @SYSCONFDIR@/rc.d/init.d/functions ]]; then
+-  _ignore_error . @SYSCONFDIR@/rc.d/init.d/functions
+-fi
+-
+ if [[ "$#" -lt 1 ]]; then
+   echo "Usage: $0 <action>" >&2
+   exit 1
