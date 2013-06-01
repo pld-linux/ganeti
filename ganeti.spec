@@ -128,27 +128,27 @@ install doc/examples/ganeti-{noded,masterd,rapi,confd}.service $RPM_BUILD_ROOT%{
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%if 0
-%pre
-%groupadd -g xxx %{name}
-%useradd -u xxx -d /var/lib/%{name} -g %{name} -c "XXX User" %{name}
-
-%postun
-if [ "$1" = "0" ]; then
-	%userremove %{name}
-	%groupremove %{name}
-fi
-%endif
-
 %post
-/sbin/chkconfig --add %{name}
-%service %{name} restart
+/sbin/chkconfig --add ganeti-noded
+%service ganeti-noded restart
+/sbin/chkconfig --add ganeti-masterd
+%service ganeti-masterd restart
+/sbin/chkconfig --add ganeti-rapi
+%service ganeti-rapi restart
+/sbin/chkconfig --add ganeti-confd
+%service ganeti-confd restart
 %systemd_post ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
 
 %preun
 if [ "$1" = "0" ]; then
-	%service -q %{name} stop
-	/sbin/chkconfig --del %{name}
+	%service -q ganeti-confd stop
+	/sbin/chkconfig --del ganeti-confd
+	%service -q ganeti-rapi stop
+	/sbin/chkconfig --del ganeti-rapi
+	%service -q ganeti-masterd stop
+	/sbin/chkconfig --del ganeti-masterd
+	%service -q ganeti-noded stop
+	/sbin/chkconfig --del ganeti-noded
 fi
 %systemd_preun ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
 
