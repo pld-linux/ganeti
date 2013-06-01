@@ -7,6 +7,7 @@ Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
 # Source0-md5:	9d9a0c5c0341d5775988961449f82b99
 Source1:	%{name}.tmpfiles
+Patch0:		fix-no-kvm.patch
 URL:		https://code.google.com/p/ganeti/
 BuildRequires:	fakeroot
 BuildRequires:	gawk
@@ -40,21 +41,24 @@ Ganeti is a cluster virtual server management software tool built on
 top of existing virtualization technologies such as Xen or KVM and
 other Open Source software.
 
-%package subpackage
-Summary:	-
-Summary(pl.UTF-8):	-
-Group:		-
-# noarch subpackages only when building with rpm5
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%package htools
+Summary:	Cluster allocation tools for Ganeti
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
 
-%description subpackage
+%description htools
+These are additional tools used for enhanced allocation and capacity
+calculation on Ganeti clusters.
 
-%description subpackage -l pl.UTF-8
+The tools provided are:
+ - hail, an iallocator script for ganeti
+ - hbal, used to redistribute instances on the cluster
+ - hspace, used for capacity calculation
+ - hscan, used to gather cluster files for offline use in hbal/hspace
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 # DON'T use full path to xl binary, just 'xl' (see lib/hypervisor/hv_xen.py for a reason)
@@ -129,18 +133,10 @@ fi
 %defattr(644,root,root,755)
 %doc NEWS README UPGRADE
 %{systemdtmpfilesdir}/ganeti.conf
-%{_bindir}/hbal
-%{_bindir}/hcheck
-%{_bindir}/hinfo
-%{_bindir}/hscan
-%{_bindir}/hspace
-%{_bindir}/htools
 %dir %{_libdir}/ganeti
 %{_libdir}/ganeti/check-cert-expired
 %{_libdir}/ganeti/daemon-util
 %{_libdir}/ganeti/ensure-dirs
-%dir %{_libdir}/ganeti/iallocators
-%{_libdir}/ganeti/iallocators/hail
 %{_libdir}/ganeti/import-export
 %{_libdir}/ganeti/kvm-ifup
 %dir %{_libdir}/ganeti/tools
@@ -174,13 +170,6 @@ fi
 %attr(755,root,root) %{_sbindir}/gnt-job
 %attr(755,root,root) %{_sbindir}/gnt-node
 %attr(755,root,root) %{_sbindir}/gnt-os
-%{_mandir}/man1/hail.1*
-%{_mandir}/man1/hbal.1*
-%{_mandir}/man1/hcheck.1*
-%{_mandir}/man1/hinfo.1*
-%{_mandir}/man1/hscan.1*
-%{_mandir}/man1/hspace.1*
-%{_mandir}/man1/htools.1*
 %{_mandir}/man7/ganeti-os-interface.7*
 %{_mandir}/man7/ganeti.7*
 %{_mandir}/man8/ganeti-cleaner.8*
@@ -239,9 +228,20 @@ fi
 %{systemdunitdir}/%{name}.service
 %endif
 
-%if %{with subpackage}
-%files subpackage
+%files htools
 %defattr(644,root,root,755)
-#%doc extras/*.gz
-#%{_datadir}/%{name}-ext
-%endif
+%{_bindir}/hbal
+%{_bindir}/hcheck
+%{_bindir}/hinfo
+%{_bindir}/hscan
+%{_bindir}/hspace
+%{_bindir}/htools
+%dir %{_libdir}/ganeti/iallocators
+%{_libdir}/ganeti/iallocators/hail
+%{_mandir}/man1/hail.1*
+%{_mandir}/man1/hbal.1*
+%{_mandir}/man1/hcheck.1*
+%{_mandir}/man1/hinfo.1*
+%{_mandir}/man1/hscan.1*
+%{_mandir}/man1/hspace.1*
+%{_mandir}/man1/htools.1*
