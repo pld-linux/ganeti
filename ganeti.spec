@@ -7,8 +7,16 @@ Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
 # Source0-md5:	9d9a0c5c0341d5775988961449f82b99
 Source1:	%{name}.tmpfiles
+Source2:	ganeti-confd.init
+Source3:	ganeti-masterd.init
+Source4:	ganeti-noded.init
+Source5:	ganeti-rapi.init
 Patch0:		fix-no-kvm.patch
+Patch1:		systemd.patch
 URL:		https://code.google.com/p/ganeti/
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	curl-devel
 BuildRequires:	fakeroot
 BuildRequires:	gawk
 BuildRequires:	ghc
@@ -16,12 +24,14 @@ BuildRequires:	ghc-QuickCheck
 BuildRequires:	ghc-curl
 BuildRequires:	ghc-haskell-platform
 BuildRequires:	ghc-json
+BuildRequires:	gmp-devel
 BuildRequires:	hlint
 BuildRequires:	hscolour
 BuildRequires:	python
 BuildRequires:	python-affinity
 BuildRequires:	python-modules
 BuildRequires:	python-paramiko
+BuildRequires:	python-pyOpenSSL
 BuildRequires:	python-pycurl
 BuildRequires:	python-pyinotify
 BuildRequires:	python-pyparsing
@@ -56,11 +66,23 @@ The tools provided are:
  - hspace, used for capacity calculation
  - hscan, used to gather cluster files for offline use in hbal/hspace
 
+%package -n bash-completion-ganeti
+Summary:	bash-completion for ganeti
+Group:		Applications/Shells
+Requires:	%{name} = %{version}
+
+%description -n bash-completion-ganeti
+bash-completion for ganeti.
+
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
+%{__aclocal} -I autotools
+%{__autoconf}
+%{__automake}
 # DON'T use full path to xl binary, just 'xl' (see lib/hypervisor/hv_xen.py for a reason)
 %configure \
 	IP_PATH=/sbin/ip \
@@ -83,12 +105,23 @@ The tools provided are:
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
-	$RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d}
+	$RPM_BUILD_ROOT/etc/{ganeti,cron.d,bash_completion.d,sysconfig,rc.d/init.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ganeti.conf
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-masterd
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-noded
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-rapi
+
+install doc/examples/bash_completion $RPM_BUILD_ROOT/etc/bash_completion.d/ganeti
+install doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
+install doc/examples/ganeti.default $RPM_BUILD_ROOT/etc/sysconfig/ganeti
+install doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
+install doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
+install doc/examples/ganeti-{noded,masterd,rapi,confd}.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 %py_postclean
 
@@ -110,14 +143,14 @@ fi
 %post
 /sbin/chkconfig --add %{name}
 %service %{name} restart
-%systemd_post %{name}.service
+%systemd_post ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service -q %{name} stop
 	/sbin/chkconfig --del %{name}
 fi
-%systemd_preun %{name}.service
+%systemd_preun ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
 
 %postun
 %systemd_reload
@@ -125,15 +158,19 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc NEWS README UPGRADE
-%attr(754,root,root) /etc/rc.d/init.d/%{name}
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
-%{systemdunitdir}/%{name}.service
+%attr(754,root,root) /etc/rc.d/init.d/ganeti-confd
+%attr(754,root,root) /etc/rc.d/init.d/ganeti-masterd
+%attr(754,root,root) /etc/rc.d/init.d/ganeti-noded
+%attr(754,root,root) /etc/rc.d/init.d/ganeti-rapi
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ganeti
+%dir %{_sysconfdir}/ganeti
+%{systemdunitdir}/ganeti.target
+%{systemdunitdir}/ganeti-confd.service
+%{systemdunitdir}/ganeti-masterd.service
+%{systemdunitdir}/ganeti-noded.service
+%{systemdunitdir}/ganeti-rapi.service
 %{systemdtmpfilesdir}/ganeti.conf
-%if 0
-# if _sysconfdir != /etc:
-#%%dir %{_sysconfdir}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*
-%endif
+/etc/cron.d/ganeti
 %dir %{_libdir}/ganeti
 %{_libdir}/ganeti/check-cert-expired
 %{_libdir}/ganeti/daemon-util
@@ -230,3 +267,7 @@ fi
 %{_mandir}/man1/hscan.1*
 %{_mandir}/man1/hspace.1*
 %{_mandir}/man1/htools.1*
+
+%files -n bash-completion-ganeti
+%defattr(644,root,root,755)
+/etc/bash_completion.d/ganeti

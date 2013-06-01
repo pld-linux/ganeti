@@ -1,0 +1,129 @@
+http://code.google.com/p/ganeti/issues/detail?id=444
+
+--- ganeti-2.6.2/Makefile.am~	2012-12-21 15:38:52.000000000 +0100
++++ ganeti-2.6.2/Makefile.am	2013-06-01 16:01:46.594026366 +0200
+@@ -149,6 +149,7 @@
+ 	devel/upload \
+ 	$(BUILT_EXAMPLES) \
+ 	doc/examples/bash_completion \
++	doc/examples/ganeti.target \
+ 	lib/_generated_rpc.py \
+ 	$(man_MANS) \
+ 	$(manhtml) \
+@@ -190,7 +190,11 @@
+ 	doc/examples/ganeti.cron \
+ 	doc/examples/ganeti.initd \
+ 	doc/examples/gnt-config-backup \
+-	doc/examples/hooks/ipsec
++	doc/examples/hooks/ipsec \
++	doc/examples/ganeti-confd.service \
++	doc/examples/ganeti-masterd.service \
++	doc/examples/ganeti-noded.service \
++	doc/examples/ganeti-rapi.service
+ 
+ nodist_pkgpython_PYTHON = \
+ 	$(BUILT_PYTHON_SOURCES)
+--- ganeti-2.6.2/doc/examples.orig/ganeti-confd.service.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti-confd.service.in	2013-06-01 15:55:37.594893846 +0200
+@@ -0,0 +1,17 @@
++[Unit]
++Description=Ganeti Confd
++Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
++After=ganeti-rapi.service
++
++[Service]
++Type=forking
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
++EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStart=@PREFIX@/sbin/ganeti-confd $CONFD_ARGS
++User=@GNTCONFDUSER@
++Group=@GNTCONFDGROUP@
++PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-confd.pid
++KillMode=process
++
++[Install]
++WantedBy=ganeti.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti-masterd.service.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti-masterd.service.in	2013-06-01 15:55:37.611560663 +0200
+@@ -0,0 +1,18 @@
++[Unit]
++Description=Ganeti Masterd
++Requires=ganeti-noded.service
++After=ganeti-noded.service
++
++[Service]
++Type=forking
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
++EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStart=@PREFIX@/sbin/ganeti-masterd $MASTERD_ARGS
++User=@GNTNODEDUSER@
++Group=@GNTDAEMONSGROUP@
++PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-masterd.pid
++# TODO: Should KillMode be process?
++KillMode=control-group
++
++[Install]
++WantedBy=ganeti.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti-noded.service.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti-noded.service.in	2013-06-01 15:55:37.631560853 +0200
+@@ -0,0 +1,15 @@
++[Unit]
++Description=Ganeti Noded
++
++[Service]
++Type=forking
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
++EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStart=@PREFIX@/sbin/ganeti-noded $NODED_ARGS
++User=@GNTNODEDUSER@
++Group=@GNTDAEMONSGROUP@
++PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-noded.pid
++KillMode=control-group
++
++[Install]
++WantedBy=ganeti.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti-rapi.service.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti-rapi.service.in	2013-06-01 15:55:37.644894309 +0200
+@@ -0,0 +1,17 @@
++[Unit]
++Description=Ganeti RAPI
++Requires=ganeti-noded.service ganeti-masterd.service
++After=ganeti-masterd.service
++
++[Service]
++Type=forking
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
++EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStart=@PREFIX@/sbin/ganeti-rapi $RAPI_ARGS
++User=@GNTRAPIUSER@
++Group=@GNTRAPIGROUP@
++PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-rapi.pid
++KillMode=process
++
++[Install]
++WantedBy=ganeti.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti.target	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti.target	2013-06-01 15:55:37.661561129 +0200
+@@ -0,0 +1,5 @@
++[Unit]
++Description=Ganeti
++
++[Install]
++WantedBy=multi-user.target
+--- ganeti-2.6.2/doc/examples.orig/README.systemd	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/README.systemd	2013-06-01 15:55:37.661561129 +0200
+@@ -0,0 +1,14 @@
++To register the services with ganeti.target (order doesn't matter):
++
++    systemctl enable ganeti-noded ganeti-masterd ganeti-rapi
++
++To include confd:
++
++    systemctl enable ganeti-confd
++
++To signal to the ganeti target that it should start at boot:
++
++    systemctl enable ganeti.target
++
++Note that the files aren't at all tested beyond just being able to start the
++daemons. I don't have Ganeti running yet, so I can't test stopping.

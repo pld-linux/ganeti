@@ -1,0 +1,108 @@
+#!/bin/sh
+#
+# ganeti-confd	Start/Stop Ganeti Cluster config daemon.
+#
+# chkconfig:	2345 99 01
+# description:	Ganeti Cluster config daemon.
+#
+# processname:	ganeti-confd
+# pidfile:	/var/run/ganeti/ganeti-confd.pid
+#
+### BEGIN INIT INFO
+# Provides:          ganeti-confd
+# Required-Start:    $syslog $remote_fs
+# Required-Stop:     $syslog $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Ganeti Cluster config daemon
+# Description:       Ganeti Cluster config daemon
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Get service config
+[ -f /etc/sysconfig/ganeti ] && . /etc/sysconfig/ganeti
+
+if [ ! -f /var/lib/ganeti/server.pem ]; then
+	echo "Missing configuration file /var/lib/ganeti/server.pem"
+	exit 1
+fi
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/ganeti-confd ]; then
+		msg_already_running "Ganeti Cluster config daemon"
+		return
+	fi
+
+	msg_starting "Ganeti Cluster config daemon"
+	daemon --user USER --pidfile /var/run/ganeti/ganeti-confd.pid /usr/sbin/ganeti-confd $CONFD_ARGS
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-confd
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/ganeti-confd ]; then
+		msg_not_running "Ganeti Cluster config daemon"
+		return
+	fi
+
+	msg_stopping "Ganeti Cluster daemon"
+	killproc --pidfile /var/run/ganeti/ganeti-confd.pid ganeti-confd
+	rm -f /var/lock/subsys/ganeti-confd
+}
+
+# HUP causes daemon to reopen logs only
+reload() {
+	if [ ! -f /var/lock/subsys/ganeti-confd ]; then
+		msg_not_running "Ganeti Cluster config daemon"
+		RETVAL=7
+		return
+	fi
+
+	msg_reloading "Ganeti Cluster config daemon"
+	killproc ganeti-confd -HUP
+	RETVAL=$?
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/ganeti-confd ]; then
+		msg_not_running "Ganeti Cluster config daemon"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  reload|force-reload|flush-logs)
+	reload
+	;;
+  status)
+	status --pidfile /var/run/ganeti/ganeti-confd.pid ganeti-confd
+	exit $?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|flush-logs|status}"
+	exit 3
+esac
+
+exit $RETVAL
