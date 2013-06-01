@@ -13,6 +13,7 @@ Source4:	ganeti-noded.init
 Source5:	ganeti-rapi.init
 Patch0:		fix-no-kvm.patch
 Patch1:		systemd.patch
+Patch2:		daemon-util-use-service.patch
 URL:		https://code.google.com/p/ganeti/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -78,6 +79,7 @@ bash-completion for ganeti.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__aclocal} -I autotools
@@ -115,6 +117,8 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-masterd
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-noded
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-rapi
+
+%{__sed} -i -e 's|@LIBDIR@|%{_libdir}|g' $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-*
 
 install doc/examples/bash_completion $RPM_BUILD_ROOT/etc/bash_completion.d/ganeti
 install doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti

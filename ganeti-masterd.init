@@ -37,6 +37,7 @@ start() {
 	fi
 
 	msg_starting "Ganeti Cluster master daemon"
+	@LIBDIR@/ganeti/ensure-dirs
 	daemon --pidfile /var/run/ganeti/ganeti-masterd.pid /usr/sbin/ganeti-masterd $MASTERD_ARGS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-masterd
