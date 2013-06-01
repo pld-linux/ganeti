@@ -37,7 +37,7 @@ start() {
 	fi
 
 	msg_starting "Ganeti Cluster config daemon"
-	daemon --user USER --pidfile /var/run/ganeti/ganeti-confd.pid /usr/sbin/ganeti-confd $CONFD_ARGS
+	daemon --pidfile /var/run/ganeti/ganeti-confd.pid /usr/sbin/ganeti-confd $CONFD_ARGS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-confd
 }

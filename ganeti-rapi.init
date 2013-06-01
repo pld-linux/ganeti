@@ -39,7 +39,7 @@ start() {
 	fi
 
 	msg_starting "Ganeti Cluster remote API daemon"
-	daemon --user USER --pidfile /var/run/ganeti/ganeti-rapi.pid /usr/sbin/ganeti-rapi $_ARGS
+	daemon --pidfile /var/run/ganeti/ganeti-rapi.pid /usr/sbin/ganeti-rapi $_ARGS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-rapi
 }

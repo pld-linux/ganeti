@@ -37,7 +37,7 @@ start() {
 	fi
 
 	msg_starting "Ganeti Cluster node daemon"
-	daemon --user USER --pidfile /var/run/ganeti/ganeti-noded.pid /usr/sbin/ganeti-noded $NODED_ARGS
+	daemon --pidfile /var/run/ganeti/ganeti-noded.pid /usr/sbin/ganeti-noded $NODED_ARGS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-noded
 }
