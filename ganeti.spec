@@ -7,10 +7,10 @@ Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
 # Source0-md5:	9d9a0c5c0341d5775988961449f82b99
 Source1:	%{name}.tmpfiles
-Source2:	ganeti-confd.init
-Source3:	ganeti-masterd.init
-Source4:	ganeti-noded.init
-Source5:	ganeti-rapi.init
+Source2:	%{name}-confd.init
+Source3:	%{name}-masterd.init
+Source4:	%{name}-noded.init
+Source5:	%{name}-rapi.init
 Patch0:		fix-no-kvm.patch
 Patch1:		systemd.patch
 Patch2:		daemon-util-use-service.patch
@@ -30,6 +30,10 @@ BuildRequires:	hlint
 BuildRequires:	hscolour
 BuildRequires:	python
 BuildRequires:	python-affinity
+BuildRequires:	python-devel
+BuildRequires:	python-devel
+BuildRequires:	python-distribute
+BuildRequires:	python-distribute
 BuildRequires:	python-modules
 BuildRequires:	python-paramiko
 BuildRequires:	python-pyOpenSSL
@@ -37,8 +41,6 @@ BuildRequires:	python-pycurl
 BuildRequires:	python-pyinotify
 BuildRequires:	python-pyparsing
 BuildRequires:	python-simplejson
-BuildRequires:	python-devel
-BuildRequires:	python-distribute
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
 Requires(post,preun):	/sbin/chkconfig
@@ -112,20 +114,20 @@ install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ganeti.conf
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-masterd
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-noded
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-rapi
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ganeti.conf
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
+install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-masterd
+install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-noded
+install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-rapi
 
 %{__sed} -i -e 's|@LIBDIR@|%{_libdir}|g' $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-*
 
-install doc/examples/bash_completion $RPM_BUILD_ROOT/etc/bash_completion.d/ganeti
-install doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
-install doc/examples/ganeti.default $RPM_BUILD_ROOT/etc/sysconfig/ganeti
-install doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
-install doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
-install doc/examples/ganeti-{noded,masterd,rapi,confd}.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p doc/examples/bash_completion $RPM_BUILD_ROOT/etc/bash_completion.d/ganeti
+cp -p doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
+cp -p doc/examples/ganeti.default $RPM_BUILD_ROOT/etc/sysconfig/ganeti
+cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p doc/examples/ganeti-{noded,masterd,rapi,confd}.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 %py_postclean
 
@@ -257,12 +259,12 @@ fi
 
 %files htools
 %defattr(644,root,root,755)
-%{_bindir}/hbal
-%{_bindir}/hcheck
-%{_bindir}/hinfo
-%{_bindir}/hscan
-%{_bindir}/hspace
-%{_bindir}/htools
+%attr(755,root,root) %{_bindir}/hbal
+%attr(755,root,root) %{_bindir}/hcheck
+%attr(755,root,root) %{_bindir}/hinfo
+%attr(755,root,root) %{_bindir}/hscan
+%attr(755,root,root) %{_bindir}/hspace
+%attr(755,root,root) %{_bindir}/htools
 %{_libdir}/ganeti/iallocators/hail
 %{_mandir}/man1/hail.1*
 %{_mandir}/man1/hbal.1*
