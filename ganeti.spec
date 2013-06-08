@@ -31,8 +31,6 @@ BuildRequires:	hscolour
 BuildRequires:	python
 BuildRequires:	python-affinity
 BuildRequires:	python-devel
-BuildRequires:	python-devel
-BuildRequires:	python-distribute
 BuildRequires:	python-distribute
 BuildRequires:	python-modules
 BuildRequires:	python-paramiko
@@ -45,8 +43,31 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
 Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun,postun):	systemd-units >= 38
+Requires:	bridge-utils
+Requires:	drbdsetup >= 8.0.12
+Requires:	drbd-udev
+Requires:	iproute2
+Requires:	iputils-arping
+Requires:	lvm2
+Requires:	openssh-clients
+Requires:	openssh-server
+Requires:	python
+Requires:	python-affinity
+Requires:	python-devel
+Requires:	python-distribute
+Requires:	python-modules
+Requires:	python-paramiko
+Requires:	python-pycurl
+Requires:	python-pyinotify
+Requires:	python-pyOpenSSL
+Requires:	python-pyparsing
+Requires:	python-simplejson
 Requires:	rc-scripts
+Requires:	socat
 Requires:	systemd-units >= 0.38
+#Suggests:	ganeti-instance-debootstrap
+Suggests:	qemu-kvm
+Suggests:	xen
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
