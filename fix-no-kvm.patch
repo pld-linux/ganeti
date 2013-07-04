@@ -6,12 +6,21 @@ Bug: https://code.google.com/p/ganeti/issues/detail?id=250
 Last-Update: 2012-07-26
 --- a/lib/hypervisor/hv_kvm.py
 +++ b/lib/hypervisor/hv_kvm.py
-@@ -554,7 +554,7 @@
-     if hvp[constants.HV_KVM_FLAG] == constants.HT_KVM_ENABLED:
-       kvm_cmd.extend(["-enable-kvm"])
-     elif hvp[constants.HV_KVM_FLAG] == constants.HT_KVM_DISABLED:
--      kvm_cmd.extend(["-disable-kvm"])
-+      kvm_cmd.extend(["-no-kvm"])
+@@ -546,7 +546,7 @@
+   _SPICE_RE = re.compile(r"^-spice\s", re.M)
+   _VHOST_RE = re.compile(r"^-net\s.*,vhost=on|off", re.M)
+   _ENABLE_KVM_RE = re.compile(r"^-enable-kvm\s", re.M)
+-  _DISABLE_KVM_RE = re.compile(r"^-disable-kvm\s", re.M)
++  _DISABLE_KVM_RE = re.compile(r"^-no-kvm\s", re.M)
+   _NETDEV_RE = re.compile(r"^-netdev\s", re.M)
+   _DISPLAY_RE = re.compile(r"^-display\s", re.M)
+   _MACHINE_RE = re.compile(r"^-machine\s", re.M)
+@@ -1054,7 +1054,7 @@
+         kvm_cmd.extend(["-enable-kvm"])
+       elif (hvp[constants.HV_KVM_FLAG] == constants.HT_KVM_DISABLED and
+             self._DISABLE_KVM_RE.search(kvmhelp)):
+-        kvm_cmd.extend(["-disable-kvm"])
++        kvm_cmd.extend(["-no-kvm"])
  
-     if boot_network:
-       kvm_cmd.extend(["-boot", "n"])
+     kernel_path = hvp[constants.HV_KERNEL_PATH]
+     if kernel_path:

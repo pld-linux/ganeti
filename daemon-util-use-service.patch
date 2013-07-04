@@ -69,9 +69,9 @@
 -      $daemonexec $args "$@"
 -  fi
 +  /sbin/service $name start
- }
  
- # Stops a daemon
+   # FIXME: This is a workaround for issue 477. Remove this once confd does not
+   # mess up the permissions anymore.
 @@ -245,14 +208,8 @@
    fi
  

@@ -1,11 +1,11 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
-Version:	2.6.2
+Version:	2.7.0
 Release:	0.1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
-# Source0-md5:	9d9a0c5c0341d5775988961449f82b99
+# Source0-md5:	c1f6a94ea4ec395325e47c16db2e5245
 Source1:	%{name}.tmpfiles
 Source2:	%{name}-confd.init
 Source3:	%{name}-masterd.init
@@ -21,17 +21,24 @@ BuildRequires:	curl-devel
 BuildRequires:	fakeroot
 BuildRequires:	gawk
 BuildRequires:	ghc
+BuildRequires:	ghc-Crypto
 BuildRequires:	ghc-QuickCheck
 BuildRequires:	ghc-curl
 BuildRequires:	ghc-haskell-platform
+BuildRequires:	ghc-hinotify
+BuildRequires:	ghc-hslogger
 BuildRequires:	ghc-json
+BuildRequires:	ghc-regex-pcre
+BuildRequires:	ghc-utf8-string
 BuildRequires:	gmp-devel
 BuildRequires:	hlint
 BuildRequires:	hscolour
 BuildRequires:	python
 BuildRequires:	python-affinity
+BuildRequires:	python-bitarray
 BuildRequires:	python-devel
 BuildRequires:	python-distribute
+BuildRequires:	python-ipaddr
 BuildRequires:	python-modules
 BuildRequires:	python-paramiko
 BuildRequires:	python-pyOpenSSL
@@ -219,7 +226,6 @@ fi
 %{_libdir}/ganeti/tools/move-instance
 %{_libdir}/ganeti/tools/ovfconverter
 %{_libdir}/ganeti/tools/sanitize-config
-%{_libdir}/ganeti/tools/setup-ssh
 %{_libdir}/ganeti/tools/xen-console-wrapper
 %attr(755,root,root) %{_sbindir}/ganeti-cleaner
 %attr(755,root,root) %{_sbindir}/ganeti-confd
