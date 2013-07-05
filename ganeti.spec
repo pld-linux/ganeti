@@ -211,6 +211,9 @@ fi
 %{_libdir}/ganeti/ensure-dirs
 %{_libdir}/ganeti/import-export
 %{_libdir}/ganeti/kvm-ifup
+%{_libdir}/ganeti/mon-collector
+%{_libdir}/ganeti/node-daemon-setup
+%{_libdir}/ganeti/prepare-node-join
 %dir %{_libdir}/ganeti/iallocators
 %dir %{_libdir}/ganeti/tools
 %{_libdir}/ganeti/tools/burnin
@@ -224,8 +227,11 @@ fi
 %{_libdir}/ganeti/tools/lvmstrap
 %{_libdir}/ganeti/tools/master-ip-setup
 %{_libdir}/ganeti/tools/move-instance
+%{_libdir}/ganeti/tools/node-cleanup
 %{_libdir}/ganeti/tools/ovfconverter
 %{_libdir}/ganeti/tools/sanitize-config
+%{_libdir}/ganeti/tools/users-setup
+%{_libdir}/ganeti/tools/vcluster-setup
 %{_libdir}/ganeti/tools/xen-console-wrapper
 %attr(755,root,root) %{_sbindir}/ganeti-cleaner
 %attr(755,root,root) %{_sbindir}/ganeti-confd
@@ -240,10 +246,14 @@ fi
 %attr(755,root,root) %{_sbindir}/gnt-group
 %attr(755,root,root) %{_sbindir}/gnt-instance
 %attr(755,root,root) %{_sbindir}/gnt-job
+%attr(755,root,root) %{_sbindir}/gnt-network
 %attr(755,root,root) %{_sbindir}/gnt-node
 %attr(755,root,root) %{_sbindir}/gnt-os
+%attr(755,root,root) %{_sbindir}/gnt-storage
+%{_mandir}/man7/ganeti-extstorage-interface.7*
 %{_mandir}/man7/ganeti-os-interface.7*
 %{_mandir}/man7/ganeti.7*
+%{_mandir}/man7/mon-collector.7*
 %{_mandir}/man8/ganeti-cleaner.8*
 %{_mandir}/man8/ganeti-confd.8*
 %{_mandir}/man8/ganeti-listrunner.8*
@@ -257,8 +267,10 @@ fi
 %{_mandir}/man8/gnt-group.8*
 %{_mandir}/man8/gnt-instance.8*
 %{_mandir}/man8/gnt-job.8*
+%{_mandir}/man8/gnt-network.8*
 %{_mandir}/man8/gnt-node.8*
 %{_mandir}/man8/gnt-os.8*
+%{_mandir}/man8/gnt-storage.8*
 %dir %{py_sitescriptdir}/ganeti
 %{py_sitescriptdir}/ganeti/*.py*
 %dir %{py_sitescriptdir}/ganeti/client
@@ -289,6 +301,7 @@ fi
 %attr(755,root,root) %{_bindir}/hbal
 %attr(755,root,root) %{_bindir}/hcheck
 %attr(755,root,root) %{_bindir}/hinfo
+%attr(755,root,root) %{_bindir}/hroller
 %attr(755,root,root) %{_bindir}/hscan
 %attr(755,root,root) %{_bindir}/hspace
 %attr(755,root,root) %{_bindir}/htools
@@ -297,6 +310,7 @@ fi
 %{_mandir}/man1/hbal.1*
 %{_mandir}/man1/hcheck.1*
 %{_mandir}/man1/hinfo.1*
+%{_mandir}/man1/hroller.1*
 %{_mandir}/man1/hscan.1*
 %{_mandir}/man1/hspace.1*
 %{_mandir}/man1/htools.1*
