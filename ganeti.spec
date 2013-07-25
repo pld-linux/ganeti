@@ -1,11 +1,11 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
-Version:	2.7.0
+Version:	2.7.1
 Release:	0.1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
-# Source0-md5:	c1f6a94ea4ec395325e47c16db2e5245
+# Source0-md5:	67f08692bca01d6d93b404ff83ae3a12
 Source1:	%{name}.tmpfiles
 Source2:	%{name}-confd.init
 Source3:	%{name}-masterd.init
@@ -123,7 +123,6 @@ bash-completion for ganeti.
 	SOCAT=/usr/bin/socat \
 	QEMUIMG_PATH=/usr/bin/qemu-img \
 	--enable-syslog \
-	--enable-htools \
 	--enable-htools-rapi \
 	--enable-confd=python \
 	--enable-socat-escape \
