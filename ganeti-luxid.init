@@ -1,0 +1,109 @@
+#!/bin/sh
+#
+# ganeti-luxid	Start/Stop Ganeti Cluster query daemon
+#
+# chkconfig:	2345 99 01
+# description:	Ganeti Cluster query daemon.
+#
+# processname:	ganeti-luxid
+# pidfile:	/var/run/ganeti/ganeti-luxid.pid
+#
+### BEGIN INIT INFO
+# Provides:          ganeti-luxid
+# Required-Start:    $syslog $remote_fs
+# Required-Stop:     $syslog $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Ganeti Cluster query daemon
+# Description:       Ganeti Cluster query daemon
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Get service config
+[ -f /etc/sysconfig/ganeti ] && . /etc/sysconfig/ganeti
+
+if [ ! -f /var/lib/ganeti/server.pem ]; then
+	echo "Missing configuration file /var/lib/ganeti/server.pem"
+	exit 1
+fi
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/ganeti-luxid ]; then
+		msg_already_running "Ganeti Cluster query daemon"
+		return
+	fi
+
+	msg_starting "Ganeti Cluster query daemon"
+	@LIBDIR@/ganeti/ensure-dirs
+	daemon --pidfile /var/run/ganeti/ganeti-luxid.pid /usr/sbin/ganeti-luxid $LUXID_ARGS
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-luxid
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/ganeti-luxid ]; then
+		msg_not_running "Ganeti Cluster query daemon"
+		return
+	fi
+
+	msg_stopping "Ganeti Cluster daemon"
+	killproc --pidfile /var/run/ganeti/ganeti-luxid.pid ganeti-luxid
+	rm -f /var/lock/subsys/ganeti-luxid
+}
+
+# HUP causes daemon to reopen logs only
+reload() {
+	if [ ! -f /var/lock/subsys/ganeti-luxid ]; then
+		msg_not_running "Ganeti Cluster query daemon"
+		RETVAL=7
+		return
+	fi
+
+	msg_reloading "Ganeti Cluster query daemon"
+	killproc ganeti-luxid -HUP
+	RETVAL=$?
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/ganeti-luxid ]; then
+		msg_not_running "Ganeti Cluster query daemon"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  reload|force-reload|flush-logs)
+	reload
+	;;
+  status)
+	status --pidfile /var/run/ganeti/ganeti-luxid.pid ganeti-luxid
+	exit $?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|flush-logs|status}"
+	exit 3
+esac
+
+exit $RETVAL

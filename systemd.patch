@@ -7,10 +7,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
  	doc/examples/bash_completion \
  	doc/examples/bash_completion-debug \
 +	doc/examples/ganeti.target \
+ 	$(userspecs) \
  	lib/_generated_rpc.py \
  	$(man_MANS) \
- 	$(manhtml) \
-@@ -190,7 +190,11 @@
+@@ -190,7 +190,13 @@
  	doc/examples/ganeti.cron \
  	doc/examples/ganeti.initd \
  	doc/examples/gnt-config-backup \
@@ -19,6 +19,8 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +	doc/examples/ganeti-confd.service \
 +	doc/examples/ganeti-masterd.service \
 +	doc/examples/ganeti-noded.service \
++	doc/examples/ganeti-luxid.service \
++	doc/examples/ganeti-mond.service \
 +	doc/examples/ganeti-rapi.service
  
  nodist_pkgpython_PYTHON = \
@@ -102,6 +104,48 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +User=@GNTRAPIUSER@
 +Group=@GNTRAPIGROUP@
 +PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-rapi.pid
++KillMode=process
++
++[Install]
++WantedBy=ganeti.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti-luxid.service.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti-luxid.service.in	2013-06-01 15:55:37.594893846 +0200
+@@ -0,0 +1,18 @@
++[Unit]
++Description=Ganeti luxid
++Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
++After=ganeti-rapi.service
++
++[Service]
++Type=forking
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
++EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStartPre=@PKGLIBDIR@/ensure-dirs
++ExecStart=@PREFIX@/sbin/ganeti-luxid $LUXID_ARGS
++User=@GNTLUXIDUSER@
++Group=@GNTLUXIDGROUP@
++PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-luxid.pid
++KillMode=process
++
++[Install]
++WantedBy=ganeti.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti-mond.service.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti-mond.service.in	2013-06-01 15:55:37.594893846 +0200
+@@ -0,0 +1,18 @@
++[Unit]
++Description=Ganeti mond
++Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
++After=ganeti-rapi.service
++
++[Service]
++Type=forking
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
++EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStartPre=@PKGLIBDIR@/ensure-dirs
++ExecStart=@PREFIX@/sbin/ganeti-mond $MOND_ARGS
++User=@GNTMONDUSER@
++Group=@GNTMONDGROUP@
++PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-mond.pid
 +KillMode=process
 +
 +[Install]

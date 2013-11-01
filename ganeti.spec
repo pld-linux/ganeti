@@ -1,16 +1,18 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
-Version:	2.7.1
+Version:	2.8.1
 Release:	0.1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
-# Source0-md5:	67f08692bca01d6d93b404ff83ae3a12
+# Source0-md5:	ade147740c2f630e0cdbb14a70e9c3ef
 Source1:	%{name}.tmpfiles
 Source2:	%{name}-confd.init
 Source3:	%{name}-masterd.init
 Source4:	%{name}-noded.init
 Source5:	%{name}-rapi.init
+Source6:	%{name}-luxid.init
+Source7:	%{name}-mond.init
 Patch0:		fix-no-kvm.patch
 Patch1:		systemd.patch
 Patch2:		daemon-util-use-service.patch
@@ -26,8 +28,9 @@ BuildRequires:	ghc-QuickCheck
 BuildRequires:	ghc-curl
 BuildRequires:	ghc-haskell-platform
 BuildRequires:	ghc-hinotify
-BuildRequires:	ghc-hslogger
+BuildRequires:	ghc-hslogger >= 1.2.3
 BuildRequires:	ghc-json
+BuildRequires:	ghc-snap-server
 BuildRequires:	ghc-regex-pcre
 BuildRequires:	ghc-utf8-string
 BuildRequires:	gmp-devel
@@ -146,6 +149,8 @@ install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-masterd
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-noded
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-rapi
+install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-luxid
+install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-mond
 
 %{__sed} -i -e 's|@LIBDIR@|%{_libdir}|g' $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-*
 
@@ -154,7 +159,7 @@ cp -p doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
 cp -p doc/examples/ganeti.default $RPM_BUILD_ROOT/etc/sysconfig/ganeti
 cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p doc/examples/ganeti-{noded,masterd,rapi,confd}.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p doc/examples/ganeti-{noded,masterd,rapi,confd,luxid,mond}.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 %py_postclean
 
@@ -170,7 +175,11 @@ rm -rf $RPM_BUILD_ROOT
 %service ganeti-rapi restart
 /sbin/chkconfig --add ganeti-confd
 %service ganeti-confd restart
-%systemd_post ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
+/sbin/chkconfig --add ganeti-luxid
+%service ganeti-luxid restart
+/sbin/chkconfig --add ganeti-mond
+%service ganeti-mond restart
+%systemd_post ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service ganeti-luxid.service ganeti-mond.service
 
 %preun
 if [ "$1" = "0" ]; then
@@ -182,8 +191,12 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del ganeti-masterd
 	%service -q ganeti-noded stop
 	/sbin/chkconfig --del ganeti-noded
+	%service -q ganeti-luxid stop
+	/sbin/chkconfig --del ganeti-luxid
+	%service -q ganeti-mond stop
+	/sbin/chkconfig --del ganeti-mond
 fi
-%systemd_preun ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
+%systemd_preun ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service ganeti-luxid.service ganeti-mond.service
 
 %postun
 %systemd_reload
@@ -192,14 +205,18 @@ fi
 %defattr(644,root,root,755)
 %doc NEWS README UPGRADE
 %attr(754,root,root) /etc/rc.d/init.d/ganeti-confd
+%attr(754,root,root) /etc/rc.d/init.d/ganeti-luxid
 %attr(754,root,root) /etc/rc.d/init.d/ganeti-masterd
+%attr(754,root,root) /etc/rc.d/init.d/ganeti-mond
 %attr(754,root,root) /etc/rc.d/init.d/ganeti-noded
 %attr(754,root,root) /etc/rc.d/init.d/ganeti-rapi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ganeti
 %dir %{_sysconfdir}/ganeti
 %{systemdunitdir}/ganeti.target
 %{systemdunitdir}/ganeti-confd.service
+%{systemdunitdir}/ganeti-luxid.service
 %{systemdunitdir}/ganeti-masterd.service
+%{systemdunitdir}/ganeti-mond.service
 %{systemdunitdir}/ganeti-noded.service
 %{systemdunitdir}/ganeti-rapi.service
 %{systemdtmpfilesdir}/ganeti.conf
@@ -235,7 +252,9 @@ fi
 %attr(755,root,root) %{_sbindir}/ganeti-cleaner
 %attr(755,root,root) %{_sbindir}/ganeti-confd
 %attr(755,root,root) %{_sbindir}/ganeti-listrunner
+%attr(755,root,root) %{_sbindir}/ganeti-luxid
 %attr(755,root,root) %{_sbindir}/ganeti-masterd
+%attr(755,root,root) %{_sbindir}/ganeti-mond
 %attr(755,root,root) %{_sbindir}/ganeti-noded
 %attr(755,root,root) %{_sbindir}/ganeti-rapi
 %attr(755,root,root) %{_sbindir}/ganeti-watcher
@@ -249,14 +268,16 @@ fi
 %attr(755,root,root) %{_sbindir}/gnt-node
 %attr(755,root,root) %{_sbindir}/gnt-os
 %attr(755,root,root) %{_sbindir}/gnt-storage
+%{_mandir}/man7/ganeti.7*
 %{_mandir}/man7/ganeti-extstorage-interface.7*
 %{_mandir}/man7/ganeti-os-interface.7*
-%{_mandir}/man7/ganeti.7*
 %{_mandir}/man7/mon-collector.7*
 %{_mandir}/man8/ganeti-cleaner.8*
 %{_mandir}/man8/ganeti-confd.8*
 %{_mandir}/man8/ganeti-listrunner.8*
+%{_mandir}/man8/ganeti-luxid.8*
 %{_mandir}/man8/ganeti-masterd.8*
+%{_mandir}/man8/ganeti-mond.8*
 %{_mandir}/man8/ganeti-noded.8*
 %{_mandir}/man8/ganeti-rapi.8*
 %{_mandir}/man8/ganeti-watcher.8*
@@ -274,6 +295,8 @@ fi
 %{py_sitescriptdir}/ganeti/*.py*
 %dir %{py_sitescriptdir}/ganeti/client
 %{py_sitescriptdir}/ganeti/client/*.py*
+%dir %{py_sitescriptdir}/ganeti/cmdlib
+%{py_sitescriptdir}/ganeti/cmdlib/*.py*
 %dir %{py_sitescriptdir}/ganeti/confd
 %{py_sitescriptdir}/ganeti/confd/*.py*
 %dir %{py_sitescriptdir}/ganeti/http
@@ -297,6 +320,7 @@ fi
 
 %files htools
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/harep
 %attr(755,root,root) %{_bindir}/hbal
 %attr(755,root,root) %{_bindir}/hcheck
 %attr(755,root,root) %{_bindir}/hinfo
@@ -306,6 +330,7 @@ fi
 %attr(755,root,root) %{_bindir}/htools
 %{_libdir}/ganeti/iallocators/hail
 %{_mandir}/man1/hail.1*
+%{_mandir}/man1/harep.1*
 %{_mandir}/man1/hbal.1*
 %{_mandir}/man1/hcheck.1*
 %{_mandir}/man1/hinfo.1*

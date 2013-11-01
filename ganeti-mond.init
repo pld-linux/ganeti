@@ -1,0 +1,109 @@
+#!/bin/sh
+#
+# ganeti-mond	Start/Stop Ganeti Cluster monitoring daemon.
+#
+# chkconfig:	2345 99 01
+# description:	Ganeti Cluster monitoring daemon.
+#
+# processname:	ganeti-mond
+# pidfile:	/var/run/ganeti/ganeti-mond.pid
+#
+### BEGIN INIT INFO
+# Provides:          ganeti-mond
+# Required-Start:    $syslog $remote_fs
+# Required-Stop:     $syslog $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Ganeti Cluster monitoring daemon
+# Description:       Ganeti Cluster monitoring daemon
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Get service config
+[ -f /etc/sysconfig/ganeti ] && . /etc/sysconfig/ganeti
+
+if [ ! -f /var/lib/ganeti/server.pem ]; then
+	echo "Missing configuration file /var/lib/ganeti/server.pem"
+	exit 1
+fi
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/ganeti-mond ]; then
+		msg_already_running "Ganeti Cluster monitoring daemon"
+		return
+	fi
+
+	msg_starting "Ganeti Cluster monitoring daemon"
+	@LIBDIR@/ganeti/ensure-dirs
+	daemon --pidfile /var/run/ganeti/ganeti-mond.pid /usr/sbin/ganeti-mond $MOND_ARGS
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti-mond
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/ganeti-mond ]; then
+		msg_not_running "Ganeti Cluster monitoring daemon"
+		return
+	fi
+
+	msg_stopping "Ganeti Cluster daemon"
+	killproc --pidfile /var/run/ganeti/ganeti-mond.pid ganeti-mond
+	rm -f /var/lock/subsys/ganeti-mond
+}
+
+# HUP causes daemon to reopen logs only
+reload() {
+	if [ ! -f /var/lock/subsys/ganeti-mond ]; then
+		msg_not_running "Ganeti Cluster monitoring daemon"
+		RETVAL=7
+		return
+	fi
+
+	msg_reloading "Ganeti Cluster monitoring daemon"
+	killproc ganeti-mond -HUP
+	RETVAL=$?
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/ganeti-mond ]; then
+		msg_not_running "Ganeti Cluster monitoring daemon"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  reload|force-reload|flush-logs)
+	reload
+	;;
+  status)
+	status --pidfile /var/run/ganeti/ganeti-mond.pid ganeti-mond
+	exit $?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|flush-logs|status}"
+	exit 3
+esac
+
+exit $RETVAL
