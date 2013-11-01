@@ -144,6 +144,8 @@ install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT%{_datadir}/ganeti/os
+
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ganeti.conf
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-masterd
@@ -221,6 +223,8 @@ fi
 %{systemdunitdir}/ganeti-rapi.service
 %{systemdtmpfilesdir}/ganeti.conf
 /etc/cron.d/ganeti
+%dir %{_datadir}/ganeti
+%dir %{_datadir}/ganeti/os
 %dir %{_libdir}/ganeti
 %{_libdir}/ganeti/check-cert-expired
 %{_libdir}/ganeti/daemon-util
