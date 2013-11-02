@@ -13,6 +13,7 @@ Source4:	%{name}-noded.init
 Source5:	%{name}-rapi.init
 Source6:	%{name}-luxid.init
 Source7:	%{name}-mond.init
+Source8:	%{name}.sysconfig
 Patch0:		fix-no-kvm.patch
 Patch1:		systemd.patch
 Patch2:		daemon-util-use-service.patch
@@ -158,9 +159,10 @@ install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-mond
 
 %{__sed} -i -e 's|@LIBDIR@|%{_libdir}|g' $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-*
 
+cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/ganeti
+
 cp -p doc/examples/bash_completion $RPM_BUILD_ROOT/etc/bash_completion.d/ganeti
 cp -p doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
-cp -p doc/examples/ganeti.default $RPM_BUILD_ROOT/etc/sysconfig/ganeti
 cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p doc/examples/ganeti-{noded,masterd,rapi,confd,luxid,mond}.service $RPM_BUILD_ROOT%{systemdunitdir}
