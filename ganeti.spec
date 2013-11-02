@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.8.1
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
@@ -226,33 +226,33 @@ fi
 %dir %{_datadir}/ganeti
 %dir %{_datadir}/ganeti/os
 %dir %{_libdir}/ganeti
-%{_libdir}/ganeti/check-cert-expired
-%{_libdir}/ganeti/daemon-util
-%{_libdir}/ganeti/ensure-dirs
-%{_libdir}/ganeti/import-export
-%{_libdir}/ganeti/kvm-ifup
-%{_libdir}/ganeti/mon-collector
-%{_libdir}/ganeti/node-daemon-setup
-%{_libdir}/ganeti/prepare-node-join
+%attr(755,root,root) %{_libdir}/ganeti/check-cert-expired
+%attr(755,root,root) %{_libdir}/ganeti/daemon-util
+%attr(755,root,root) %{_libdir}/ganeti/ensure-dirs
+%attr(755,root,root) %{_libdir}/ganeti/import-export
+%attr(755,root,root) %{_libdir}/ganeti/kvm-ifup
+%attr(755,root,root) %{_libdir}/ganeti/mon-collector
+%attr(755,root,root) %{_libdir}/ganeti/node-daemon-setup
+%attr(755,root,root) %{_libdir}/ganeti/prepare-node-join
 %dir %{_libdir}/ganeti/iallocators
 %dir %{_libdir}/ganeti/tools
-%{_libdir}/ganeti/tools/burnin
-%{_libdir}/ganeti/tools/cfgshell
-%{_libdir}/ganeti/tools/cfgupgrade
-%{_libdir}/ganeti/tools/cfgupgrade12
-%{_libdir}/ganeti/tools/cluster-merge
-%{_libdir}/ganeti/tools/confd-client
-%{_libdir}/ganeti/tools/fmtjson
-%{_libdir}/ganeti/tools/kvm-console-wrapper
-%{_libdir}/ganeti/tools/lvmstrap
-%{_libdir}/ganeti/tools/master-ip-setup
-%{_libdir}/ganeti/tools/move-instance
-%{_libdir}/ganeti/tools/node-cleanup
-%{_libdir}/ganeti/tools/ovfconverter
-%{_libdir}/ganeti/tools/sanitize-config
-%{_libdir}/ganeti/tools/users-setup
-%{_libdir}/ganeti/tools/vcluster-setup
-%{_libdir}/ganeti/tools/xen-console-wrapper
+%attr(755,root,root) %{_libdir}/ganeti/tools/burnin
+%attr(755,root,root) %{_libdir}/ganeti/tools/cfgshell
+%attr(755,root,root) %{_libdir}/ganeti/tools/cfgupgrade
+%attr(755,root,root) %{_libdir}/ganeti/tools/cfgupgrade12
+%attr(755,root,root) %{_libdir}/ganeti/tools/cluster-merge
+%attr(755,root,root) %{_libdir}/ganeti/tools/confd-client
+%attr(755,root,root) %{_libdir}/ganeti/tools/fmtjson
+%attr(755,root,root) %{_libdir}/ganeti/tools/kvm-console-wrapper
+%attr(755,root,root) %{_libdir}/ganeti/tools/lvmstrap
+%attr(755,root,root) %{_libdir}/ganeti/tools/master-ip-setup
+%attr(755,root,root) %{_libdir}/ganeti/tools/move-instance
+%attr(755,root,root) %{_libdir}/ganeti/tools/node-cleanup
+%attr(755,root,root) %{_libdir}/ganeti/tools/ovfconverter
+%attr(755,root,root) %{_libdir}/ganeti/tools/sanitize-config
+%attr(755,root,root) %{_libdir}/ganeti/tools/users-setup
+%attr(755,root,root) %{_libdir}/ganeti/tools/vcluster-setup
+%attr(755,root,root) %{_libdir}/ganeti/tools/xen-console-wrapper
 %attr(755,root,root) %{_sbindir}/ganeti-cleaner
 %attr(755,root,root) %{_sbindir}/ganeti-confd
 %attr(755,root,root) %{_sbindir}/ganeti-listrunner
@@ -332,7 +332,7 @@ fi
 %attr(755,root,root) %{_bindir}/hscan
 %attr(755,root,root) %{_bindir}/hspace
 %attr(755,root,root) %{_bindir}/htools
-%{_libdir}/ganeti/iallocators/hail
+%attr(755,root,root) %{_libdir}/ganeti/iallocators/hail
 %{_mandir}/man1/hail.1*
 %{_mandir}/man1/harep.1*
 %{_mandir}/man1/hbal.1*
