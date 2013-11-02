@@ -32,10 +32,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +Description=Ganeti Confd
 +Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
 +After=ganeti-rapi.service
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
-+ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-confd $CONFD_ARGS
@@ -53,10 +53,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +Description=Ganeti Masterd
 +Requires=ganeti-noded.service
 +After=ganeti-noded.service
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
-+ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-masterd $MASTERD_ARGS
@@ -73,10 +73,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 @@ -0,0 +1,16 @@
 +[Unit]
 +Description=Ganeti Noded
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
-+ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-noded $NODED_ARGS
@@ -94,10 +94,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +Description=Ganeti RAPI
 +Requires=ganeti-noded.service ganeti-masterd.service
 +After=ganeti-masterd.service
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
-+ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-rapi $RAPI_ARGS
@@ -115,10 +115,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +Description=Ganeti luxid
 +Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
 +After=ganeti-rapi.service
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
-+ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-luxid $LUXID_ARGS
@@ -136,10 +136,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +Description=Ganeti mond
 +Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
 +After=ganeti-rapi.service
++ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
-+ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-mond $MOND_ARGS
