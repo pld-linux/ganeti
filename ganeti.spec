@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.8.1
-Release:	0.3
+Release:	0.4
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
@@ -63,6 +63,7 @@ Requires:	openssh-clients
 Requires:	openssh-server
 Requires:	python
 Requires:	python-affinity
+Requires:	python-bitarray
 Requires:	python-devel
 Requires:	python-distribute
 Requires:	python-ipaddr
@@ -131,7 +132,7 @@ bash-completion for ganeti.
 	--enable-confd=python \
 	--enable-socat-escape \
 	--with-ssh-initscript=/etc/rc.d/init.d/sshd \
-	--with-ssh-config-dir=/stc/ssh \
+	--with-ssh-config-dir=/etc/ssh \
 	--with-xen-cmd=xl \
 	--with-kvm-path=/usr/bin/qemu-kvm
 
