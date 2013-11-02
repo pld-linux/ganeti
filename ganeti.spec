@@ -65,6 +65,7 @@ Requires:	python
 Requires:	python-affinity
 Requires:	python-devel
 Requires:	python-distribute
+Requires:	python-ipaddr
 Requires:	python-modules
 Requires:	python-paramiko
 Requires:	python-pycurl
