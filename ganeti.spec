@@ -56,7 +56,6 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	bridge-utils
 Requires:	drbdsetup >= 8.0.12
-Requires:	drbd-udev
 Requires:	iproute2
 Requires:	iputils-arping
 Requires:	lvm2
