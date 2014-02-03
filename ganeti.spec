@@ -43,6 +43,8 @@ BuildRequires:	python-bitarray
 BuildRequires:	python-devel
 BuildRequires:	python-distribute
 BuildRequires:	python-ipaddr
+# mock >= 1.0.1 for ganeti 2.10
+BuildRequires:	python-mock
 BuildRequires:	python-modules
 BuildRequires:	python-paramiko
 BuildRequires:	python-pyOpenSSL
