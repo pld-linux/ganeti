@@ -17,6 +17,7 @@ Source8:	%{name}.sysconfig
 Patch0:		fix-no-kvm.patch
 Patch1:		systemd.patch
 Patch2:		daemon-util-use-service.patch
+Patch3:		mtl.patch
 URL:		https://code.google.com/p/ganeti/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -117,6 +118,7 @@ bash-completion for ganeti.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__aclocal} -I autotools
