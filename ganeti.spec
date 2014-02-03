@@ -1,11 +1,11 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
-Version:	2.8.1
-Release:	0.4
+Version:	2.9.3
+Release:	0.1
 License:	GPL v2
 Group:		Applications/System
-Source0:	https://ganeti.googlecode.com/files/%{name}-%{version}.tar.gz
-# Source0-md5:	ade147740c2f630e0cdbb14a70e9c3ef
+Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
+# Source0-md5:	0542ca872bf2d57284359fcc8dc565ef
 Source1:	%{name}.tmpfiles
 Source2:	%{name}-confd.init
 Source3:	%{name}-masterd.init
