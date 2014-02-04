@@ -132,13 +132,15 @@ bash-completion for ganeti.
 	SOCAT=/usr/bin/socat \
 	QEMUIMG_PATH=/usr/bin/qemu-img \
 	--enable-syslog \
-	--enable-htools-rapi \
-	--enable-confd=python \
+	--enable-confd \
+	--enable-monitoring \
 	--enable-socat-escape \
 	--with-ssh-initscript=/etc/rc.d/init.d/sshd \
 	--with-ssh-config-dir=/etc/ssh \
-	--with-xen-cmd=xl \
-	--with-kvm-path=/usr/bin/qemu-kvm
+	--with-kvm-path=/usr/bin/qemu-kvm \
+	--enable-restricted-commands \
+	--with-user-prefix="gnt-" \
+	--with-group-prefix="gnt-"
 
 %{__make}
 
@@ -175,6 +177,18 @@ cp -p doc/examples/ganeti-{noded,masterd,rapi,confd,luxid,mond}.service $RPM_BUI
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+%groupadd -g 300 gnt-masterd
+%groupadd -g 301 gnt-confd
+%groupadd -g 302 gnt-luxid
+%groupadd -g 303 gnt-rapi
+%groupadd -g 304 gnt-daemons
+%groupadd -g 305 gnt-admin
+%useradd -u 300 -d /var/lib/ganeti -g gnt-masterd -G gnt-daemons,gnt-confd,gnt-admin -c "Ganeti Masterd User" gnt-masterd
+%useradd -u 301 -d /var/lib/ganeti -g gnt-confd -G gnt-daemons -c "Ganeti Confd User" gnt-confd
+%useradd -u 302 -d /var/lib/ganeti -g gnt-luxid -G gnt-daemons,gnt-confd,gnt-masterd -c "Ganeti Luxid User" gnt-luxid
+%useradd -u 303 -d /var/lib/ganeti -g gnt-rapi -G gnt-daemons,gnt-admin -c "Ganeti RAPI User" gnt-rapi
+
 %post
 /sbin/chkconfig --add ganeti-noded
 %service ganeti-noded restart
@@ -208,6 +222,18 @@ fi
 %systemd_preun ganeti.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service ganeti-luxid.service ganeti-mond.service
 
 %postun
+if [ "$1" = "0" ]; then
+	%userremove gnt-rapi
+	%userremove gnt-luxid
+	%userremove gnt-confd
+	%userremove gnt-masterd
+	%groupremove gnt-admin
+	%groupremove gnt-masterd
+	%groupremove gnt-rapi
+	%groupremove gnt-luxid
+	%groupremove gnt-confd
+	%groupremove gnt-daemons
+fi
 %systemd_reload
 
 %files
