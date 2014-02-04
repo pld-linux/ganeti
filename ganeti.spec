@@ -81,7 +81,7 @@ Requires:	rc-scripts
 Requires:	socat
 Requires:	systemd-units >= 0.38
 #Suggests:	ganeti-instance-debootstrap
-Suggests:	qemu-kvm
+Suggests:	qemu
 Suggests:	xen
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
