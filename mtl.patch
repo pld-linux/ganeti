@@ -1,3 +1,13 @@
+--- ganeti-2.9.3/Makefile.am~	2014-02-03 22:26:36.193571670 +0100
++++ ganeti-2.9.3/Makefile.am	2014-02-04 00:05:22.467565093 +0100
+@@ -538,6 +538,7 @@
+ 	-O -Wall -Werror -isrc \
+ 	-fwarn-monomorphism-restriction \
+ 	-fwarn-tabs \
++	-XPackageImports \
+ 	$(GHC_BYVERSION_FLAGS)
+ 
+ # extra flags that can be overriden on the command line (e.g. -Wwarn, etc.)
 --- ganeti-2.9.3/src/Ganeti/BasicTypes.hs~	2014-01-27 10:20:35.000000000 +0100
 +++ ganeti-2.9.3/src/Ganeti/BasicTypes.hs	2014-02-04 00:03:58.709925227 +0100
 @@ -45,7 +45,7 @@
@@ -9,13 +19,14 @@
  import Data.Function
  import Data.List
  
---- ganeti-2.9.3/Makefile.am~	2014-02-03 22:26:36.193571670 +0100
-+++ ganeti-2.9.3/Makefile.am	2014-02-04 00:05:22.467565093 +0100
-@@ -538,6 +538,7 @@
- 	-O -Wall -Werror -isrc \
- 	-fwarn-monomorphism-restriction \
- 	-fwarn-tabs \
-+	-XPackageImports \
- 	$(GHC_BYVERSION_FLAGS)
+--- ganeti-2.9.3/src/Ganeti/Query/Query.hs~	2014-01-27 10:20:35.000000000 +0100
++++ ganeti-2.9.3/src/Ganeti/Query/Query.hs	2014-02-04 00:38:32.723993874 +0100
+@@ -54,7 +54,7 @@
  
- # extra flags that can be overriden on the command line (e.g. -Wwarn, etc.)
+ import Control.DeepSeq
+ import Control.Monad (filterM, foldM)
+-import Control.Monad.Trans (lift)
++import "mtl" Control.Monad.Trans (lift)
+ import Data.List (intercalate)
+ import Data.Maybe (fromMaybe)
+ import qualified Data.Map as Map

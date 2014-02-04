@@ -240,7 +240,9 @@ fi
 %attr(755,root,root) %{_libdir}/ganeti/kvm-ifup
 %attr(755,root,root) %{_libdir}/ganeti/mon-collector
 %attr(755,root,root) %{_libdir}/ganeti/node-daemon-setup
+%attr(755,root,root) %{_libdir}/ganeti/net-common
 %attr(755,root,root) %{_libdir}/ganeti/prepare-node-join
+%attr(755,root,root) %{_libdir}/ganeti/vif-ganeti
 %dir %{_libdir}/ganeti/iallocators
 %dir %{_libdir}/ganeti/tools
 %attr(755,root,root) %{_libdir}/ganeti/tools/burnin
@@ -322,6 +324,8 @@ fi
 %{py_sitescriptdir}/ganeti/rapi/*.py*
 %dir %{py_sitescriptdir}/ganeti/server
 %{py_sitescriptdir}/ganeti/server/*.py*
+%dir %{py_sitescriptdir}/ganeti/storage
+%{py_sitescriptdir}/ganeti/storage/*.py*
 %dir %{py_sitescriptdir}/ganeti/tools
 %{py_sitescriptdir}/ganeti/tools/*.py*
 %dir %{py_sitescriptdir}/ganeti/utils
