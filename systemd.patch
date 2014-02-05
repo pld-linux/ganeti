@@ -60,8 +60,8 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +EnvironmentFile=-/etc/sysconfig/ganeti
 +ExecStartPre=@PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-masterd $MASTERD_ARGS
-+User=@GNTNODEDUSER@
-+Group=@GNTDAEMONSGROUP@
++User=@GNTMASTERUSER@
++Group=@GNTMASTERDGROUP@
 +PIDFile=@LOCALSTATEDIR@/run/ganeti/ganeti-masterd.pid
 +# TODO: Should KillMode be process?
 +KillMode=control-group
