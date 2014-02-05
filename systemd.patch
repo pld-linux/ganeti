@@ -49,7 +49,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +WantedBy=ganeti.target
 --- ganeti-2.6.2/doc/examples.orig/ganeti-masterd.service.in	1970-01-01 01:00:00.000000000 +0100
 +++ ganeti-2.6.2/doc/examples/ganeti-masterd.service.in	2013-06-01 15:55:37.611560663 +0200
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,20 @@
 +[Unit]
 +Description=Ganeti Masterd
 +Requires=ganeti-noded.service
@@ -59,6 +59,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Service]
 +Type=forking
 +EnvironmentFile=-/etc/sysconfig/ganeti
++ExecStartPre=/bin/sh -c '[ "$(cat @LOCALSTATEDIR@/lib/ganeti/ssconf_master_node 2>/dev/null)" = "$(hostname -f 2>/dev/null)" ]'
 +ExecStartPre=/usr/bin/sudo @PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-masterd $MASTERD_ARGS
 +User=@GNTMASTERUSER@
