@@ -10,7 +10,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
  	$(userspecs) \
  	lib/_generated_rpc.py \
  	$(man_MANS) \
-@@ -190,7 +190,13 @@
+@@ -190,7 +190,14 @@
  	doc/examples/ganeti.cron \
  	doc/examples/ganeti.initd \
  	doc/examples/gnt-config-backup \
@@ -21,7 +21,8 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +	doc/examples/ganeti-noded.service \
 +	doc/examples/ganeti-luxid.service \
 +	doc/examples/ganeti-mond.service \
-+	doc/examples/ganeti-rapi.service
++	doc/examples/ganeti-rapi.service \
++	doc/examples/ganeti.sudoers
  
  nodist_pkgpython_PYTHON = \
  	$(BUILT_PYTHON_SOURCES)
@@ -37,7 +38,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Service]
 +Type=forking
 +EnvironmentFile=-/etc/sysconfig/ganeti
-+ExecStartPre=@PKGLIBDIR@/ensure-dirs
++ExecStartPre=/usr/bin/sudo @PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-confd $CONFD_ARGS
 +User=@GNTCONFDUSER@
 +Group=@GNTCONFDGROUP@
@@ -58,7 +59,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Service]
 +Type=forking
 +EnvironmentFile=-/etc/sysconfig/ganeti
-+ExecStartPre=@PKGLIBDIR@/ensure-dirs
++ExecStartPre=/usr/bin/sudo @PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-masterd $MASTERD_ARGS
 +User=@GNTMASTERUSER@
 +Group=@GNTMASTERDGROUP@
@@ -92,14 +93,14 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 @@ -0,0 +1,18 @@
 +[Unit]
 +Description=Ganeti RAPI
-+Requires=ganeti-noded.service ganeti-masterd.service
++Requires=ganeti-noded.service
 +After=ganeti-masterd.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
 +Type=forking
 +EnvironmentFile=-/etc/sysconfig/ganeti
-+ExecStartPre=@PKGLIBDIR@/ensure-dirs
++ExecStartPre=/usr/bin/sudo @PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-rapi $RAPI_ARGS
 +User=@GNTRAPIUSER@
 +Group=@GNTRAPIGROUP@
@@ -120,7 +121,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Service]
 +Type=forking
 +EnvironmentFile=-/etc/sysconfig/ganeti
-+ExecStartPre=@PKGLIBDIR@/ensure-dirs
++ExecStartPre=/usr/bin/sudo @PKGLIBDIR@/ensure-dirs
 +ExecStart=@PREFIX@/sbin/ganeti-luxid $LUXID_ARGS
 +User=@GNTLUXIDUSER@
 +Group=@GNTLUXIDGROUP@
@@ -134,8 +135,8 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 @@ -0,0 +1,18 @@
 +[Unit]
 +Description=Ganeti mond
-+Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
-+After=ganeti-rapi.service
++Requires=ganeti-noded.service
++After=ganeti-rapi.service ganeti-masterd.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
@@ -158,12 +159,18 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +
 +[Install]
 +WantedBy=multi-user.target
+--- ganeti-2.6.2/doc/examples.orig/ganeti.sudoers.in	1970-01-01 01:00:00.000000000 +0100
++++ ganeti-2.6.2/doc/examples/ganeti.sudoers.in	2013-06-01 15:55:37.661561129 +0200
+@@ -0,0 +1,3 @@
++User_Alias GANETI = @GNTCONFDUSER@, @GNTMASTERUSER@, @GNTRAPIUSER@, @GNTLUXIDUSER@
++
++GANETI	ALL=(ALL) NOPASSWD: @PKGLIBDIR@/ensure-dirs
 --- ganeti-2.6.2/doc/examples.orig/README.systemd	1970-01-01 01:00:00.000000000 +0100
 +++ ganeti-2.6.2/doc/examples/README.systemd	2013-06-01 15:55:37.661561129 +0200
 @@ -0,0 +1,14 @@
 +To register the services with ganeti.target (order doesn't matter):
 +
-+    systemctl enable ganeti-noded ganeti-masterd ganeti-rapi
++    systemctl enable ganeti-noded ganeti-masterd ganeti-rapi ganeti-mond
 +
 +To include confd:
 +

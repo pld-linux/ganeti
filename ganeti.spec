@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	0.3
+Release:	0.4
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -82,6 +82,7 @@ Requires:	python-pyparsing
 Requires:	python-simplejson
 Requires:	rc-scripts
 Requires:	socat
+Requires:	sudo
 Requires:	systemd-units >= 0.38
 #Suggests:	ganeti-instance-debootstrap
 Suggests:	qemu
@@ -151,7 +152,7 @@ bash-completion for ganeti.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
-	$RPM_BUILD_ROOT/etc/{ganeti,cron.d,bash_completion.d,sysconfig,rc.d/init.d}
+	$RPM_BUILD_ROOT/etc/{ganeti,cron.d,bash_completion.d,sysconfig,rc.d/init.d,sudoers.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -173,8 +174,8 @@ cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/ganeti
 cp -p doc/examples/bash_completion $RPM_BUILD_ROOT/etc/bash_completion.d/ganeti
 cp -p doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
 cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p doc/examples/ganeti-{noded,masterd,rapi,confd,luxid,mond}.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p doc/examples/ganeti.sudoers $RPM_BUILD_ROOT/etc/sudoers.d/ganeti
 
 %py_postclean
 
@@ -250,6 +251,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/ganeti-noded
 %attr(754,root,root) /etc/rc.d/init.d/ganeti-rapi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ganeti
+%config(noreplace) %verify(not md5 mtime size) /etc/sudoers.d/ganeti
 %dir %{_sysconfdir}/ganeti
 %{systemdunitdir}/ganeti.target
 %{systemdunitdir}/ganeti-confd.service
