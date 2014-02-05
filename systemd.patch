@@ -31,7 +31,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 @@ -0,0 +1,18 @@
 +[Unit]
 +Description=Ganeti Confd
-+Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
++Requires=ganeti-noded.service
 +After=ganeti-rapi.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
@@ -93,7 +93,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 @@ -0,0 +1,18 @@
 +[Unit]
 +Description=Ganeti RAPI
-+Requires=ganeti-noded.service
++Requires=ganeti-noded.service ganeti-masterd.service
 +After=ganeti-masterd.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
