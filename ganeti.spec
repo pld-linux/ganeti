@@ -132,7 +132,7 @@ bash-completion for ganeti.
 %configure \
 	IP_PATH=/sbin/ip \
 	DOT=/usr/bin/dot \
-	PYCOVERAGE=/usr/bin/coverage-2.7 \
+	PYCOVERAGE=/usr/bin/coverage-%{py_ver} \
 	PYLINT=/usr/bin/pylint \
 	SOCAT=/usr/bin/socat \
 	QEMUIMG_PATH=/usr/bin/qemu-img \
