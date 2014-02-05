@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -32,22 +32,25 @@ BuildRequires:	ghc-haskell-platform
 BuildRequires:	ghc-hinotify
 BuildRequires:	ghc-hslogger >= 1.2.3
 BuildRequires:	ghc-json
-BuildRequires:	ghc-snap-server
 BuildRequires:	ghc-regex-pcre
+BuildRequires:	ghc-snap-server
+BuildRequires:	ghc-temporary
 BuildRequires:	ghc-utf8-string
 BuildRequires:	gmp-devel
 BuildRequires:	hlint
 BuildRequires:	hscolour
+BuildRequires:	pandoc
 BuildRequires:	python
 BuildRequires:	python-affinity
 BuildRequires:	python-bitarray
+BuildRequires:	python-coverage
 BuildRequires:	python-devel
 BuildRequires:	python-distribute
 BuildRequires:	python-ipaddr
-# mock >= 1.0.1 for ganeti 2.10
-BuildRequires:	python-mock
+BuildRequires:	python-mock >= 1.0.1
 BuildRequires:	python-modules
 BuildRequires:	python-paramiko
+BuildRequires:	python-pep8
 BuildRequires:	python-pyOpenSSL
 BuildRequires:	python-pycurl
 BuildRequires:	python-pyinotify
@@ -128,6 +131,7 @@ bash-completion for ganeti.
 %configure \
 	IP_PATH=/sbin/ip \
 	DOT=/usr/bin/dot \
+	PYCOVERAGE=/usr/bin/coverage-2.7 \
 	PYLINT=/usr/bin/pylint \
 	SOCAT=/usr/bin/socat \
 	QEMUIMG_PATH=/usr/bin/qemu-img \
