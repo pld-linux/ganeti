@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	0.6
+Release:	0.7
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -18,6 +18,7 @@ Patch0:		fix-no-kvm.patch
 Patch1:		systemd.patch
 Patch2:		daemon-util-use-service.patch
 Patch3:		mtl.patch
+Patch4:		use-vm-openvswitch-link.patch
 URL:		https://code.google.com/p/ganeti/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -123,6 +124,7 @@ bash-completion for ganeti.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %{__aclocal} -I autotools
