@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	0.4
+Release:	0.6
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -145,7 +145,11 @@ bash-completion for ganeti.
 	--with-kvm-path=/usr/bin/qemu-kvm \
 	--enable-restricted-commands \
 	--with-user-prefix="gnt-" \
-	--with-group-prefix="gnt-"
+	--with-group-prefix="gnt-" \
+	--with-export-dir=/var/lib/ganeti/export \
+	--with-iallocator-search-path=%{_libdir}/ganeti/iallocators \
+	--with-os-search-path=/srv/ganeti/os,%{_libdir}/ganeti/os,%{_datadir}/ganeti/os \
+	--with-extstorage-search-path=/srv/ganeti/extstorage,%{_libdir}/ganeti/extstorage,%{_datadir}/ganeti/extstorage
 
 %{__make}
 
@@ -157,7 +161,7 @@ install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{_datadir}/ganeti/os
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_datadir}}/ganeti/{os,extstorage}
 
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ganeti.conf
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ganeti-confd
@@ -263,6 +267,7 @@ fi
 %{systemdtmpfilesdir}/ganeti.conf
 /etc/cron.d/ganeti
 %dir %{_datadir}/ganeti
+%dir %{_datadir}/ganeti/extstorage
 %dir %{_datadir}/ganeti/os
 %dir %{_libdir}/ganeti
 %attr(755,root,root) %{_libdir}/ganeti/check-cert-expired
@@ -275,7 +280,9 @@ fi
 %attr(755,root,root) %{_libdir}/ganeti/net-common
 %attr(755,root,root) %{_libdir}/ganeti/prepare-node-join
 %attr(755,root,root) %{_libdir}/ganeti/vif-ganeti
+%dir %{_libdir}/ganeti/extstorage
 %dir %{_libdir}/ganeti/iallocators
+%dir %{_libdir}/ganeti/os
 %dir %{_libdir}/ganeti/tools
 %attr(755,root,root) %{_libdir}/ganeti/tools/burnin
 %attr(755,root,root) %{_libdir}/ganeti/tools/cfgshell
