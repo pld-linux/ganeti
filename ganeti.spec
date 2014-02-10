@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	0.7
+Release:	0.9
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -373,6 +373,9 @@ fi
 %{py_sitescriptdir}/ganeti/utils/*.py*
 %dir %{py_sitescriptdir}/ganeti/watcher
 %{py_sitescriptdir}/ganeti/watcher/*.py*
+%dir %attr(755,gnt-masterd,gnt-masterd) /var/lib/ganeti
+%dir %attr(770,gnt-masterd,gnt-daemons) /var/log/ganeti
+%dir %attr(775,gnt-masterd,gnt-daemons) /var/run/ganeti
 
 %files htools
 %defattr(644,root,root,755)
