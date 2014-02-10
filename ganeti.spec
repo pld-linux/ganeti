@@ -132,7 +132,6 @@ bash-completion for ganeti.
 %{__aclocal} -I autotools
 %{__autoconf}
 %{__automake}
-# DON'T use full path to xl binary, just 'xl' (see lib/hypervisor/hv_xen.py for a reason)
 %configure \
 	IP_PATH=/sbin/ip \
 	DOT=/usr/bin/dot \
