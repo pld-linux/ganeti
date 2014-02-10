@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	0.9
+Release:	0.10
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -85,7 +85,9 @@ Requires:	rc-scripts
 Requires:	socat
 Requires:	sudo
 Requires:	systemd-units >= 0.38
-#Suggests:	ganeti-instance-debootstrap
+Suggests:	ganeti-instance-debootstrap
+Suggests:	ganeti-instance-poldek
+Suggests:	openvswitch
 Suggests:	qemu
 Suggests:	xen
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
