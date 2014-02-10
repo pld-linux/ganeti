@@ -1,1 +1,1 @@
-d /var/run/ganeti 0755 root root -
+d /var/run/ganeti 0775 gnt-masterd gnt-daemons -
