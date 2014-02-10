@@ -158,7 +158,7 @@ bash-completion for ganeti.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{systemdunitdir},%{systemdtmpfilesdir}} \
-	$RPM_BUILD_ROOT/etc/{ganeti,cron.d,bash_completion.d,sysconfig,rc.d/init.d,sudoers.d}
+	$RPM_BUILD_ROOT/etc/{ganeti,cron.d,bash_completion.d,sysconfig,rc.d/init.d,sudoers.d,logrotate.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -182,6 +182,8 @@ cp -p doc/examples/ganeti.cron $RPM_BUILD_ROOT/etc/cron.d/ganeti
 cp -p doc/examples/ganeti.target $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p doc/examples/ganeti-{noded,masterd,rapi,confd,luxid,mond}.service $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p doc/examples/ganeti.sudoers $RPM_BUILD_ROOT/etc/sudoers.d/ganeti
+cp -p doc/examples/ganeti.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/ganeti
+cp -p doc/examples/gnt-config-backup $RPM_BUILD_ROOT%{_sbindir}
 
 %py_postclean
 
@@ -268,6 +270,7 @@ fi
 %{systemdunitdir}/ganeti-rapi.service
 %{systemdtmpfilesdir}/ganeti.conf
 /etc/cron.d/ganeti
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/ganeti
 %dir %{_datadir}/ganeti
 %dir %{_datadir}/ganeti/extstorage
 %dir %{_datadir}/ganeti/os
@@ -278,8 +281,8 @@ fi
 %attr(755,root,root) %{_libdir}/ganeti/import-export
 %attr(755,root,root) %{_libdir}/ganeti/kvm-ifup
 %attr(755,root,root) %{_libdir}/ganeti/mon-collector
-%attr(755,root,root) %{_libdir}/ganeti/node-daemon-setup
 %attr(755,root,root) %{_libdir}/ganeti/net-common
+%attr(755,root,root) %{_libdir}/ganeti/node-daemon-setup
 %attr(755,root,root) %{_libdir}/ganeti/prepare-node-join
 %attr(755,root,root) %{_libdir}/ganeti/vif-ganeti
 %dir %{_libdir}/ganeti/extstorage
@@ -314,6 +317,7 @@ fi
 %attr(755,root,root) %{_sbindir}/ganeti-watcher
 %attr(755,root,root) %{_sbindir}/gnt-backup
 %attr(755,root,root) %{_sbindir}/gnt-cluster
+%attr(755,root,root) %{_sbindir}/gnt-config-backup
 %attr(755,root,root) %{_sbindir}/gnt-debug
 %attr(755,root,root) %{_sbindir}/gnt-group
 %attr(755,root,root) %{_sbindir}/gnt-instance
