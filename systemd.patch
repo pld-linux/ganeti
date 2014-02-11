@@ -32,7 +32,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Unit]
 +Description=Ganeti Confd
 +Requires=ganeti-noded.service
-+After=ganeti-noded.service ganeti-rapi.service
++After=network.target ganeti-noded.service ganeti-rapi.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
@@ -53,7 +53,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Unit]
 +Description=Ganeti Masterd
 +Requires=ganeti-noded.service
-+After=ganeti-noded.service
++After=network.target ganeti-noded.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
@@ -72,9 +72,10 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +WantedBy=ganeti.target
 --- ganeti-2.6.2/doc/examples.orig/ganeti-noded.service.in	1970-01-01 01:00:00.000000000 +0100
 +++ ganeti-2.6.2/doc/examples/ganeti-noded.service.in	2013-06-01 15:55:37.631560853 +0200
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,17 @@
 +[Unit]
 +Description=Ganeti Noded
++After=network.target
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
@@ -95,7 +96,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Unit]
 +Description=Ganeti RAPI
 +Requires=ganeti-noded.service ganeti-masterd.service
-+After=ganeti-noded.service ganeti-masterd.service
++After=network.target ganeti-noded.service ganeti-masterd.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
@@ -116,7 +117,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Unit]
 +Description=Ganeti luxid
 +Requires=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
-+After=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
++After=network.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service ganeti-confd.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
@@ -137,7 +138,7 @@ http://code.google.com/p/ganeti/issues/detail?id=444
 +[Unit]
 +Description=Ganeti mond
 +Requires=ganeti-noded.service
-+After=ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
++After=network.target ganeti-noded.service ganeti-masterd.service ganeti-rapi.service
 +ConditionPathExists=@LOCALSTATEDIR@/lib/ganeti/server.pem
 +
 +[Service]
