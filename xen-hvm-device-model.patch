@@ -1,0 +1,53 @@
+diff -ur ganeti-2.9.3/lib/constants.py ganeti-2.9.3-devmodel/lib/constants.py
+--- ganeti-2.9.3/lib/constants.py	2014-01-27 10:20:35.000000000 +0100
++++ ganeti-2.9.3-devmodel/lib/constants.py	2014-02-12 19:55:47.569588274 +0100
+@@ -913,6 +913,8 @@
+ HV_USB_MOUSE = "usb_mouse"
+ HV_KEYMAP = "keymap"
+ HV_DEVICE_MODEL = "device_model"
++HV_DEVICE_MODEL_VERSION = "device_model_version"
++HV_DEVICE_MODEL_OVERRIDE = "device_model_override"
+ HV_INIT_SCRIPT = "init_script"
+ HV_MIGRATION_PORT = "migration_port"
+ HV_MIGRATION_BANDWIDTH = "migration_bandwidth"
+@@ -988,6 +990,8 @@
+   HV_USB_MOUSE: VTYPE_STRING,
+   HV_KEYMAP: VTYPE_STRING,
+   HV_DEVICE_MODEL: VTYPE_STRING,
++  HV_DEVICE_MODEL_VERSION: VTYPE_STRING,
++  HV_DEVICE_MODEL_OVERRIDE: VTYPE_STRING,
+   HV_INIT_SCRIPT: VTYPE_STRING,
+   HV_MIGRATION_PORT: VTYPE_INT,
+   HV_MIGRATION_BANDWIDTH: VTYPE_INT,
+@@ -2086,6 +2090,8 @@
+     HV_PAE: True,
+     HV_KERNEL_PATH: "/usr/lib/xen/boot/hvmloader",
+     HV_DEVICE_MODEL: "/usr/lib/xen/bin/qemu-dm",
++    HV_DEVICE_MODEL_VERSION: "",
++    HV_DEVICE_MODEL_OVERRIDE: "",
+     HV_MIGRATION_PORT: 8002,
+     HV_MIGRATION_MODE: HT_MIGRATION_NONLIVE,
+     HV_USE_LOCALTIME: False,
+diff -ur ganeti-2.9.3/lib/hypervisor/hv_xen.py ganeti-2.9.3-devmodel/lib/hypervisor/hv_xen.py
+--- ganeti-2.9.3/lib/hypervisor/hv_xen.py	2014-02-12 20:02:01.476840082 +0100
++++ ganeti-2.9.3-devmodel/lib/hypervisor/hv_xen.py	2014-02-12 20:01:05.332918224 +0100
+@@ -1130,6 +1130,8 @@
+        "VNC bind address is not a valid IP address", None, None),
+     constants.HV_KERNEL_PATH: hv_base.REQ_FILE_CHECK,
+     constants.HV_DEVICE_MODEL: hv_base.REQ_FILE_CHECK,
++    constants.HV_DEVICE_MODEL_VERSION: hv_base.NO_CHECK,
++    constants.HV_DEVICE_MODEL_OVERRIDE: hv_base.NO_CHECK,
+     constants.HV_VNC_PASSWORD_FILE: hv_base.REQ_FILE_CHECK,
+     constants.HV_MIGRATION_PORT: hv_base.REQ_NET_PORT_CHECK,
+     constants.HV_MIGRATION_MODE: hv_base.MIGRATION_MODE_CHECK,
+@@ -1194,6 +1196,10 @@
+ 
+     config.write("apic = 1\n")
+     config.write("device_model = '%s'\n" % hvp[constants.HV_DEVICE_MODEL])
++    if hvp[constants.HV_DEVICE_MODEL_VERSION]:
++      config.write("device_model_version = '%s'\n" % hvp[constants.HV_DEVICE_MODEL_VERSION])
++    if hvp[constants.HV_DEVICE_MODEL_OVERRIDE]:
++      config.write("device_model_override = '%s'\n" % hvp[constants.HV_DEVICE_MODEL_OVERRIDE])
+     config.write("boot = '%s'\n" % hvp[constants.HV_BOOT_ORDER])
+     config.write("sdl = 0\n")
+     config.write("usb = 1\n")
