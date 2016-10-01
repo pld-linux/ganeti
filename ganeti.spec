@@ -1,7 +1,7 @@
 Summary:	Cluster-based virtualization management software
 Name:		ganeti
 Version:	2.9.3
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://downloads.ganeti.org/releases/2.9/%{name}-%{version}.tar.gz
@@ -63,7 +63,7 @@ BuildRequires:	rpmbuild(macros) >= 1.647
 Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	bridge-utils
-Requires:	drbdsetup >= 8.0.12
+Requires:	drbd-utils >= 8.0.12
 Requires:	iproute2
 Requires:	iputils-arping
 Requires:	lvm2
